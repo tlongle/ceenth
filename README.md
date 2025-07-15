@@ -26,3 +26,12 @@ The polyphonic audio engine was made using the Naudio library, making it possibl
 - Preset support (comes with four factory presets)
 - Waveform preview via a basic Oscilloscope
 
+
+## About the warning...
+
+**Sigh..** the database was made using SQL Server,  and the ADO.NET Entity Framework was used to pass the data onto the client... I know... It's ancient technology and it is VERY deprecated. The project itself, was even made using **.NET Framework**, instead of .NET Core...
+
+These are, unfortunately, requirements for this final project. Since we used these technologies in our classes, it has to use this tech stack. For now.
+
+> [!IMPORTANT]  
+> The project will continue, and I will remake the entire database part to make it just SQLite based on local databases. I will add more features to this, but, for now, I'm not accepting any contributions. Sorry!

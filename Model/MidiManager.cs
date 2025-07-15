@@ -7,18 +7,19 @@ using System.Threading.Tasks;
 
 namespace ceenth.Model
 {
+
+    /// <summary>
+    /// Esta feature ainda não foi implementada, por isso é irrelevante
+    /// O código semi funciona, mas simplesmente não faz sentido gastar o meu tempo com isto agora
+    /// </summary>
     public class MidiManager : IDisposable
     {
         private MidiIn _midiIn;
 
-        // Events that the ViewModel can subscribe to
+        // Eventos para o Viewmodel
         public event EventHandler<MidiNoteEventArgs> NoteOnReceived;
         public event EventHandler<MidiNoteEventArgs> NoteOffReceived;
 
-        /// <summary>
-        /// Gets a list of all available MIDI input devices.
-        /// </summary>
-        /// <returns>A dictionary where the key is the device ID and the value is the product name.</returns>
         public static Dictionary<int, string> GetInputDevices()
         {
             var devices = new Dictionary<int, string>();
@@ -29,27 +30,21 @@ namespace ceenth.Model
             return devices;
         }
 
-        /// <summary>
-        /// Starts listening for MIDI messages on a specific device.
-        /// </summary>
-        /// <param name="deviceId">The ID of the MIDI device to connect to.</param>
+        // Código que começa a "ouvir" para eventos de MIDI
         public void StartListening(int deviceId)
         {
-            // Stop listening to any previous device
+            // Para de ouvir o dispositivo anterior (implementado para safe-keeping)
             StopListening();
 
             if (deviceId >= 0 && deviceId < MidiIn.NumberOfDevices)
             {
                 _midiIn = new MidiIn(deviceId);
-                // Subscribe to the MessageReceived event from NAudio
                 _midiIn.MessageReceived += MidiIn_MessageReceived;
                 _midiIn.Start();
             }
         }
 
-        /// <summary>
-        /// Stops listening for MIDI messages.
-        /// </summary>
+        // Para de "ouvir" eventos vindo de MIDI
         public void StopListening()
         {
             if (_midiIn != null)

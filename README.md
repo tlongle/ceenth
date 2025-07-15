@@ -26,6 +26,14 @@ The polyphonic audio engine was made using the Naudio library, making it possibl
 - Preset support (comes with four factory presets)
 - Waveform preview via a basic Oscilloscope
 
+### **To implement:**
+
+- MIDI support
+- More effects (like Reverb, completing the ADSR suite, etc...)
+- Design to be changed
+- Database engine to be changed
+
+
 
 ## About the warning...
 

@@ -1,5 +1,5 @@
 > [!WARNING]  
-> THIS PROJECT IS NOT FINISHED! The current version of the project, was made JUST to be presented in my final class, there WILL be changes to the tech stack to make it portable, and the code has to be cleaned up. Use at your own risk and headaches!
+> **THIS PROJECT IS NOT FINISHED!** The current version of the project, was made JUST to be presented in my final class, there WILL be changes to the tech stack to make it portable, and the code has to be cleaned up. Use at your own risk and headaches!
 
 ![Ceenth Logo](https://i.imgur.com/6CL8BDM.png)
 
@@ -25,6 +25,7 @@ The polyphonic audio engine was made using the Naudio library, making it possibl
 - Basic effects for sound manipulation (Tremolo & Vibrato)
 - Preset support (comes with four factory presets)
 - Waveform preview via a basic Oscilloscope
+- Basic support to play notes with your computer's keyboard
 
 ### **To implement:**
 

@@ -1,3 +1,5 @@
+> [!NOTE]  
+> THIS PROJECT IS NOT FINISHED! The current version of the project, was made JUST to be presented in my final class, there WILL be changes to the tech stack to make it portable, and the code has to be cleaned up. Use at your own risk and headaches!
 
 ![Ceenth Logo](https://i.imgur.com/6CL8BDM.png)
 

@@ -45,7 +45,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
+        <!-- Icones feitos pelo Gemini (obrigado por me salvares do trabalho de fazer isto de maneira diferente) -->
         <PathGeometry x:Key="SineIcon">M0,10 C5,0 15,20 20,10</PathGeometry>
         <PathGeometry x:Key="SquareIcon">M0,0 L0,10 L10,10 L10,20 L20,20</PathGeometry>
         <PathGeometry x:Key="SawtoothIcon">M0,20 L20,0 L20,20 Z</PathGeometry>
@@ -76,28 +76,24 @@
                 <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
-
+        <!-- Slider verde :) -->
         <Style x:Key="VerticalGreenSlider" TargetType="{x:Type Slider}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Slider}">
                         <Grid>
-                            <!-- The track background -->
                             <Border x:Name="TrackBackground" 
                                     Width="4" 
                                     HorizontalAlignment="Center"
                                     Background="#555" 
                                     CornerRadius="2" />
-
-                            <!-- The part of the track that is "filled" -->
                             <Rectangle x:Name="PART_SelectionRange"
                                        Fill="LimeGreen"
                                        Width="4"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Bottom"
                                        Height="{TemplateBinding Value}" />
-
-                            <!-- The draggable thumb -->
+                            <!-- Thumb (sigh...) -->
                             <Track x:Name="PART_Track">
                                 <Track.Thumb>
                                     <Thumb>
@@ -122,7 +118,7 @@
         </Style>
 
     </Window.Resources>
-
+    <!-- Topo da app -->
     <DockPanel Background="#2D2D30">
         <Grid DockPanel.Dock="Top" Margin="10">
             <Grid.ColumnDefinitions>
@@ -130,8 +126,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <!-- Combobox de Waveform -->
+            <!-- Combobox das Waveform -->
             <TextBlock Text="Waveform:"/>
             <ComboBox Grid.Column="0" 
                       ItemsSource="{Binding Waveforms}" 
@@ -139,8 +134,7 @@
                       ItemTemplate="{StaticResource WaveformItemTemplate}"
                       MinWidth="150"
                       VerticalAlignment="Center"/>
-
-            <!-- Controlos de oitavo -->
+            <!-- Controlos dos oitavos -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Content="&lt;" Command="{Binding DecreaseOctaveCommand}" MinWidth="25"/>
                 <TextBlock Text="{Binding Octave, StringFormat={}Octave: {0}}" 
@@ -151,7 +145,6 @@
                            TextAlignment="Center"/>
                 <Button Content="&gt;" Command="{Binding IncreaseOctaveCommand}" MinWidth="25"/>
             </StackPanel>
-
             <!-- Management de presets -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                 <ComboBox ItemsSource="{Binding Presets}"
@@ -166,7 +159,6 @@
                 <Button Content="Delete" Command="{Binding DeletePresetCommand}" Margin="5,0,0,0" MinWidth="60" Background="#C0392B" Foreground="White"/>
             </StackPanel>
         </Grid>
-
         <!-- Teclado piano -->
         <Grid DockPanel.Dock="Bottom">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="322" Height="162" Margin="0,0,0,20">
@@ -192,7 +184,6 @@
                    VerticalAlignment="Bottom" 
                    Margin="0,0,15,-21" Width="114"/>
         </Grid>
-
         <!-- Conteúdo principal com oscilloscópio e sliders -->
         <Border Background="#3E3E42" Margin="10,0,10,10" CornerRadius="5">
             <Grid>
@@ -245,7 +236,7 @@
                                 Margin="0,5,0,0"/>
                         <TextBlock Text="{Binding FilterCutoffDisplay}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                     </StackPanel>
-                    <!-- Hz do Filtro (para dar target de frequencias altas ou baixas) -->
+                    <!-- Hz do Filtro (para dar target de frequências altas ou baixas) -->
                     <StackPanel Orientation="Vertical" Margin="15,10">
                         <Label Content="Q" Foreground="White" HorizontalAlignment="Center"/>
                         <Slider Style="{StaticResource VerticalGreenSlider}"
@@ -270,7 +261,7 @@
                                 Margin="0,5,0,0"/>
                         <TextBlock Text="{Binding VibratoRate, StringFormat={}{0:F1}Hz}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                     </StackPanel>
-                    <!-- Depth do Vibrato (o quao agressivo o vibrato vai ser) -->
+                    <!-- Depth do Vibrato (o quão agressivo o vibrato vai ser) -->
                     <StackPanel Orientation="Vertical" Margin="15,10">
                         <Label Content="Vibrato Depth" Foreground="White" HorizontalAlignment="Center"/>
                         <Slider Style="{StaticResource VerticalGreenSlider}"
@@ -296,7 +287,7 @@
                             Margin="0,5,0,0"/>
                         <TextBlock Text="{Binding TremoloRate, StringFormat={}{0:F1}Hz}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                     </StackPanel>
-                    <!-- Depth do Tremolo (o quao agressivo o tremolo vai ser) -->
+                    <!-- Depth do Tremolo (o quão agressivo o tremolo vai ser) -->
                     <StackPanel Orientation="Vertical" Margin="15,10">
                         <Label Content="Tremolo Depth" Foreground="White" HorizontalAlignment="Center"/>
                         <Slider Style="{StaticResource VerticalGreenSlider}"

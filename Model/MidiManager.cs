@@ -82,9 +82,6 @@ namespace ceenth.Model
         }
     }
 
-    /// <summary>
-    /// A custom EventArgs class to pass MIDI note data.
-    /// </summary>
     public class MidiNoteEventArgs : EventArgs
     {
         public int NoteNumber { get; }

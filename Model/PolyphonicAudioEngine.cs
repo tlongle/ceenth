@@ -21,10 +21,13 @@ namespace ceenth.Model
     /// o som que está a tocar nas colunas do dispositivo
     internal class VisualizerSampleProvider : ISampleProvider
     {
-        // _source trata de ir buscar a waveform
+        // _source é o ISampleProvider que vai buscar a waveform
         private readonly ISampleProvider _source;
+        // _circularBuffer é um buffer circular que guarda os samples lidos
         private readonly float[] _circularBuffer;
+        // _lockObject é usado para garantir que o acesso ao buffer circular é thread-safe
         private readonly object _lockObject = new object();
+        // _writePosition é a posição atual de escrita no buffer circular
         private int _writePosition;
         public WaveFormat WaveFormat => _source.WaveFormat;
         public VisualizerSampleProvider(ISampleProvider source, int bufferSize = 1024) { _source = source; _circularBuffer = new float[bufferSize]; }
@@ -63,9 +66,11 @@ namespace ceenth.Model
     {
         // _source vai buscar a waveform ao ISampleProvider
         private readonly ISampleProvider _source;
-        // parametros necessários para o cálculo final
+        // Número de canais do áudio (mono, stereo, etc.)
         private readonly int _channels;
+        // Coeficientes do filtro
         private double a0, a1, a2, b1, b2;
+        // Arrays para armazenar os estados anteriores do filtro para cada canal
         private readonly float[] x1, x2, y1, y2;
         public WaveFormat WaveFormat => _source.WaveFormat;
         public FilterSampleProvider(ISampleProvider source) { _source = source; _channels = source.WaveFormat.Channels; x1 = new float[_channels]; x2 = new float[_channels]; y1 = new float[_channels]; y2 = new float[_channels]; }
@@ -73,7 +78,7 @@ namespace ceenth.Model
         /// Este código trata de criar o low-pass filter
         /// Estes cálculos são demasiado complicados para eu compreender
         /// E só os consegui executar com ajuda da documentação e de inteligência artificial
-        /// Funciona! dentro dos possíveis
+        /// Funciona! dentro dos possíveis...
         /// </summary>
         public void SetLowPassFilter(float sampleRate, float cutoff, float q) { q = Math.Max(0.001f, q); double w0 = 2 * Math.PI * cutoff / sampleRate; double cosw0 = Math.Cos(w0); double sinw0 = Math.Sin(w0); double alpha = sinw0 / (2 * q); double b0_temp = (1 - cosw0) / 2; b1 = 1 - cosw0; b2 = (1 - cosw0) / 2; a0 = 1 + alpha; a1 = -2 * cosw0; a2 = 1 - alpha; b2 = b2 / a0; b1 = b1 / a0; a2 = a2 / a0; a1 = a1 / a0; a0 = b0_temp / a0; }
         /// Este código aplica o low-pass filter à função "Read"

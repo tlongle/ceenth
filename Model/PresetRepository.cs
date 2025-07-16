@@ -10,11 +10,13 @@ namespace ceenth.Model
     {
         private readonly DB_CeenthEntities _context;
 
+        // puxa contexto das Entities do Entity Framework
         public PresetRepository()
         {
             _context = new DB_CeenthEntities();
         }
 
+        // Métodos CRUD para Presets
         public List<Preset> GetAllPresets()
         {
             return _context.Presets.ToList();

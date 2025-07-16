@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:ceenth.View"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
+    <!-- Tive de fazer isto a parte -->
+    <!-- Porque se não ocupava demasiado espaço naquela miséria -->
+    <!-- Preferi fazer assim, seja o que for! -->
     <Viewbox Stretch="Fill" ClipToBounds="True">
         <Canvas Width="1024" Height="200" Background="#1A1A1A">
             <Polyline Points="{Binding WaveformPoints}"

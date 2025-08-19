@@ -15,6 +15,24 @@ namespace ceenth.Model
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
 
+        private void ShowDatabaseLocation()
+        {
+            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ceenth.db");
+
+            string message = $"Database path: {dbPath}\n" +
+                            $"File exists: {File.Exists(dbPath)}\n" +
+                            $"Base directory: {AppDomain.CurrentDomain.BaseDirectory}";
+
+            System.Windows.MessageBox.Show(message, "Database Location");
+
+            // Copy to clipboard
+            if (File.Exists(dbPath))
+            {
+                System.Windows.Clipboard.SetText(dbPath);
+            }
+        }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

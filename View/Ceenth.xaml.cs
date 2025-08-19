@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 using ceenth.Viewmodel;
 
 namespace ceenth
@@ -28,7 +29,10 @@ namespace ceenth
         {
             InitializeComponent();
             _viewModel = DataContext as MainViewmodel;
+            var dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ceenth.db");
+            System.Windows.MessageBox.Show($"Database at: {dbPath}");
         }
+
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -95,5 +99,7 @@ namespace ceenth
                 }
             }
         }
+
+
     }
 }

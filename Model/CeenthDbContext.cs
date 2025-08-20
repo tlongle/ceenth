@@ -10,8 +10,12 @@ namespace ceenth.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // SQLite database file will be created in the app's directory
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ceenth.db");
+            // Put database in user's AppData folder
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var ceenthFolder = System.IO.Path.Combine(appDataPath, "Ceenth");
+            System.IO.Directory.CreateDirectory(ceenthFolder); // Ensure folder exists
+            var dbPath = System.IO.Path.Combine(ceenthFolder, "ceenth.db");
+
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
 

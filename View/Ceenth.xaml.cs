@@ -29,8 +29,6 @@ namespace ceenth
         {
             InitializeComponent();
             _viewModel = DataContext as MainViewmodel;
-            var dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ceenth.db");
-            System.Windows.MessageBox.Show($"Database at: {dbPath}");
         }
 
 

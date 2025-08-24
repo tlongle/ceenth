@@ -163,8 +163,6 @@ dotnet publish -c Release -r win-x64 --no-self-contained \
 - [ ] MIDI input support (via NAudio)
 - [ ] Effects: Reverb, Chorus, Delay
 - [ ] Full ADSR (add Decay & Sustain)
-- [ ] Optional Windows ARM64 build
-- [ ] GitHub Actions CI for releases
 
 See the [open issues](https://github.com/tlongle/ceenth/issues) for the full list of planned features and known issues.
 

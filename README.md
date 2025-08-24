@@ -90,7 +90,7 @@ Originally built as a final project for **Programming II**, it has since evolved
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Follow these steps to run Ceenth locally or publish a lightweight framework-dependent build.
+Follow these steps to run Ceenth locally.
 
 ### Prerequisites
 

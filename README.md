@@ -212,7 +212,7 @@ Project Link: https://github.com/tlongle/ceenth
 [license-shield]: https://img.shields.io/github/license/tlongle/ceenth.svg?style=for-the-badge
 [license-url]: https://github.com/tlongle/ceenth/blob/main/LICENSE
 
-[product-screenshot]: https://i.imgur.com/kbO61R7.gif
+[product-screenshot]: https://i.imgur.com/1Q4OPib.gif
 
 [DotNet-badge]: https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white
 [DotNet-url]: https://dotnet.microsoft.com/

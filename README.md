@@ -71,9 +71,6 @@ It features a polyphonic engine (chords), oscilloscope waveform preview, a basic
 
 Originally built as a final project for **Programming II**, it has since evolved into a modern, maintainable .NET 8 app using MVVM and WPF.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 

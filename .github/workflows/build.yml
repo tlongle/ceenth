@@ -4,7 +4,7 @@ on:
   workflow_dispatch:   # lets you run manually
   push:
     tags:
-      - "v*"          # runs only when you push a version tag like v1.0.0
+      - "v1.0.0"          # runs only when you push a version tag like v1.0.0
 
 jobs:
   build:

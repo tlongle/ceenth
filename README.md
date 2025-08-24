@@ -1,3 +1,6 @@
+> [!WARNING]  
+> The comments are almost **ALL** in Portuguese, I'm working on translating to English, but for now, since I don't have any contributors, it will stay like this. Thanks!
+
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->

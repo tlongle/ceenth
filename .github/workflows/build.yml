@@ -1,0 +1,36 @@
+name: Build & Release Ceenth
+
+on:
+  workflow_dispatch:   # lets you run manually
+  push:
+    tags:
+      - "v*"          # runs only when you push a version tag like v1.0.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build and Publish
+        run: dotnet publish -c Release -r win-x64 -p:SelfContained=false -p:PublishSingleFile=false -p:PublishTrimmed=false --output ./publish
+
+      - name: Zip published app
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./Ceenth.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Ceenth.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

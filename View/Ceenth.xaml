@@ -8,24 +8,275 @@
         xmlns:View="clr-namespace:ceenth.View"
         mc:Ignorable="d"
         Title="Ceenth"
-        Height="750" Width="1000" 
+        Height="800" Width="1200" 
         ResizeMode="NoResize"
         KeyDown="Window_KeyDown"
         KeyUp="Window_KeyUp"
         Closing="Window_Closing"
-        FontFamily="Lato Semibold">
+        FontFamily="Segoe UI">
 
     <Window.DataContext>
         <Viewmodel:MainViewmodel/>
     </Window.DataContext>
 
     <Window.Resources>
-        <!-- Estilo para a tecla branca do Piano -->
+        <!-- Enhanced color palette -->
+        <SolidColorBrush x:Key="DarkBackground" Color="#1A1A1D"/>
+        <SolidColorBrush x:Key="CardBackground" Color="#2D2D35"/>
+        <SolidColorBrush x:Key="AccentColor" Color="LimeGreen"/>
+        <SolidColorBrush x:Key="AccentColorHover" Color="#2E8B57"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#B0B0B0"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#404040"/>
+        <SolidColorBrush x:Key="CardBackgroundHover" Color="#26262C"/>
+
+        <!-- Modern button style -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="6"
+                                BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentColorHover}"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#4ECDC4" BlurRadius="10" Opacity="0.3"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#3A9B95"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern ComboBox style (fixed open + hover visuals) -->
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="templateRoot"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+                                <Grid>
+                                    <ContentPresenter x:Name="contentPresenter"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      IsHitTestVisible="False"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Click surface -->
+                            <ToggleButton x:Name="toggleButton"
+                                          Background="Transparent"
+                                          BorderBrush="Transparent"
+                                          BorderThickness="0"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent"/>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <!-- Arrow -->
+                            <Path x:Name="arrow"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,15,0"
+                                  Data="M 0 0 L 4 4 L 8 0 Z"
+                                  Fill="{StaticResource TextSecondary}"
+                                  IsHitTestVisible="False"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform>
+                                    <RotateTransform Angle="0"/>
+                                </Path.RenderTransform>
+                            </Path>
+
+                            <!-- Popup -->
+                            <Popup x:Name="PART_Popup"
+                                   AllowsTransparency="True"
+                                   Placement="Bottom"
+                                   PlacementTarget="{Binding ElementName=templateRoot}"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   PopupAnimation="Fade">
+                                <Border x:Name="dropDownBorder"
+                                        Background="{StaticResource CardBackground}"
+                                        BorderBrush="{StaticResource AccentColor}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        SnapsToDevicePixels="True">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#66000000" BlurRadius="10" Opacity="0.3"/>
+                                    </Border.Effect>
+                                    <ScrollViewer x:Name="DropDownScrollViewer" CanContentScroll="True">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource CardBackgroundHover}"/>
+                                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="arrow" Property="Fill" Value="{StaticResource AccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource CardBackgroundHover}"/>
+                                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="arrow" Property="Fill" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="arrow" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="templateRoot" Property="Background" Value="#3C3C3C"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+                                <Setter TargetName="arrow" Property="Fill" Value="{StaticResource TextSecondary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBox items -->
+        <Style x:Key="ModernComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardBackgroundHover}"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                            </Trigger>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardBackgroundHover}"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentColor}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern TextBox style -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Focusable="false" 
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#4ECDC4" BlurRadius="8" Opacity="0.2"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Piano key styles -->
         <Style TargetType="Rectangle" x:Key="WhiteKeyStyle">
-            <Setter Property="Fill" Value="White"/>
-            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FAFAFA" Offset="0"/>
+                        <GradientStop Color="#E8E8E8" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Stroke" Value="#CCCCCC"/>
             <Setter Property="StrokeThickness" Value="1"/>
             <Setter Property="Panel.ZIndex" Value="0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" BlurRadius="2" Opacity="0.1" Direction="270"/>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPressed}" Value="True">
                     <Setter Property="Fill" Value="LightGray"/>
@@ -33,18 +284,30 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Estilo para a tecla preta do Piano -->
         <Style TargetType="Rectangle" x:Key="BlackKeyStyle">
-            <Setter Property="Fill" Value="Black"/>
-            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#2A2A2A" Offset="0"/>
+                        <GradientStop Color="#1A1A1A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Stroke" Value="#404040"/>
             <Setter Property="StrokeThickness" Value="1"/>
             <Setter Property="Panel.ZIndex" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" BlurRadius="4" Opacity="0.3" Direction="270"/>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPressed}" Value="True">
                     <Setter Property="Fill" Value="#333333"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+      
         <!-- Icones feitos pelo Gemini (obrigado por me salvares do trabalho de fazer isto de maneira diferente) -->
         <PathGeometry x:Key="SineIcon">M0,10 C5,0 15,20 20,10</PathGeometry>
         <PathGeometry x:Key="SquareIcon">M0,0 L0,10 L10,10 L10,20 L20,20</PathGeometry>
@@ -53,7 +316,7 @@
 
         <DataTemplate x:Key="WaveformItemTemplate">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Path Stroke="Black" StrokeThickness="1.5" Width="20" Height="20" Margin="0,0,8,0">
+                <Path Stroke="{StaticResource AccentColor}" StrokeThickness="2" Width="20" Height="20" Margin="0,0,8,0">
                     <Path.Style>
                         <Style TargetType="Path">
                             <Style.Triggers>
@@ -73,41 +336,35 @@
                         </Style>
                     </Path.Style>
                 </Path>
-                <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding}" VerticalAlignment="Center" Foreground="{StaticResource TextPrimary}"/>
             </StackPanel>
         </DataTemplate>
+
         <!-- Slider verde :) -->
         <Style x:Key="VerticalGreenSlider" TargetType="{x:Type Slider}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Slider}">
                         <Grid>
-                            <Border x:Name="TrackBackground" 
-                                    Width="4" 
+                            <Border Width="6"
                                     HorizontalAlignment="Center"
-                                    Background="#555" 
-                                    CornerRadius="2" />
-                            <Rectangle x:Name="PART_SelectionRange"
-                                       Fill="LimeGreen"
-                                       Width="4"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Bottom"
-                                       Height="{TemplateBinding Value}" />
-                            <!-- Thumb (sigh...) -->
-                            <Track x:Name="PART_Track">
+                                    Background="#404040"
+                                    CornerRadius="3"/>
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
                                 <Track.Thumb>
                                     <Thumb>
-                                        <Thumb.Style>
-                                            <Style TargetType="{x:Type Thumb}">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type Thumb}">
-                                                            <Rectangle Width="20" Height="8" Fill="LimeGreen" RadiusX="2" RadiusY="2"/>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </Thumb.Style>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Ellipse Width="16"
+                                                         Height="16"
+                                                         Fill="{StaticResource AccentColor}"
+                                                         StrokeThickness="0">
+                                                    <Ellipse.Effect>
+                                                        <DropShadowEffect Color="Black" BlurRadius="4" Opacity="0.2"/>
+                                                    </Ellipse.Effect>
+                                                </Ellipse>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
                                     </Thumb>
                                 </Track.Thumb>
                             </Track>
@@ -116,192 +373,493 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
-    <!-- Topo da app -->
-    <DockPanel Background="#2D2D30">
-        <Grid DockPanel.Dock="Top" Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <!-- Combobox das Waveform -->
-            <TextBlock Text="Waveform:"/>
-            <ComboBox Grid.Column="0" 
-                      ItemsSource="{Binding Waveforms}" 
-                      SelectedItem="{Binding SelectedWaveform}"
-                      ItemTemplate="{StaticResource WaveformItemTemplate}"
-                      MinWidth="150"
-                      VerticalAlignment="Center"/>
-            <!-- Controlos dos oitavos -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Content="&lt;" Command="{Binding DecreaseOctaveCommand}" MinWidth="25"/>
-                <TextBlock Text="{Binding Octave, StringFormat={}Octave: {0}}" 
-                           Foreground="White" 
-                           VerticalAlignment="Center" 
-                           Margin="10,0"
-                           MinWidth="60"
-                           TextAlignment="Center"/>
-                <Button Content="&gt;" Command="{Binding IncreaseOctaveCommand}" MinWidth="25"/>
-            </StackPanel>
-            <!-- Management de presets -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <ComboBox ItemsSource="{Binding Presets}"
-                          SelectedItem="{Binding SelectedPreset}"
-                          DisplayMemberPath="Name"
-                          MinWidth="150"/>
-                <TextBox Text="{Binding NewPresetName, UpdateSourceTrigger=PropertyChanged}" 
-                         MinWidth="150" 
-                         Margin="10,0,0,0"
-                         VerticalContentAlignment="Center"/>
-                <Button Content="Save" Command="{Binding SavePresetCommand}" Margin="10,0,0,0" MinWidth="60"/>
-                <Button Content="Delete" Command="{Binding DeletePresetCommand}" Margin="5,0,0,0" MinWidth="60" Background="#C0392B" Foreground="White"/>
-            </StackPanel>
-        </Grid>
-        <!-- Teclado piano -->
-        <Grid DockPanel.Dock="Bottom">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="322" Height="162" Margin="0,0,0,20">
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[0]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="0,0,0,0"   PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[2]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="40,0,0,0"  PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[4]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="80,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[5]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="120,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[7]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="160,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[9]}"  Width="40" Height="160" HorizontalAlignment="Left" Margin="200,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[11]}" Width="40" Height="160" HorizontalAlignment="Left" Margin="240,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource WhiteKeyStyle}" DataContext="{Binding PianoKeys[12]}" Width="40" Height="160" HorizontalAlignment="Left" Margin="280,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource BlackKeyStyle}" DataContext="{Binding PianoKeys[1]}"  Width="24" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,0,0,0"  PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource BlackKeyStyle}" DataContext="{Binding PianoKeys[3]}"  Width="24" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="68,0,0,0"  PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_PreviewMouseUp" MouseLeave="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource BlackKeyStyle}" DataContext="{Binding PianoKeys[6]}"  Width="24" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="148,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource BlackKeyStyle}" DataContext="{Binding PianoKeys[8]}"  Width="24" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="188,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_MouseLeave"/>
-                <Rectangle Style="{StaticResource BlackKeyStyle}" DataContext="{Binding PianoKeys[10]}" Width="24" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="228,0,0,0" PreviewMouseDown="Key_PreviewMouseDown" PreviewMouseUp="Key_MouseLeave"/>
-            </Grid>
-            <!-- Logotipo -->
-            <Image Source="/Assets/CeenthFull.png"
-                   Height="114"
-                   Opacity="0.5"
-                   HorizontalAlignment="Right" 
-                   VerticalAlignment="Bottom" 
-                   Margin="0,0,15,-21" Width="114"/>
-        </Grid>
-        <!-- Conteúdo principal com oscilloscópio e sliders -->
-        <Border Background="#3E3E42" Margin="10,0,10,10" CornerRadius="5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" MinHeight="100"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!-- Oscilloscópio -->
-                <View:Oscilloscope Grid.Row="0"
-                                    DataContext="{Binding OscilloscopeViewmodel}"
-                                    Margin="10"/>
-                <!-- StackPanel com os sliders de todos os efeitos -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,10,0,10">
-                    <!-- Attack -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Attack" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical"
-                                Value="{Binding AttackSeconds, Mode=TwoWay}"
-                                Minimum="0.01"
-                                Maximum="2.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding AttackSeconds, StringFormat={}{0:F2}s}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Release -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Release" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical"
-                                Value="{Binding ReleaseSeconds, Mode=TwoWay}"
-                                Minimum="0.01"
-                                Maximum="5.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding ReleaseSeconds, StringFormat={}{0:F2}s}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Filtro -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Cutoff" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical"
-                                Value="{Binding FilterCutoff, Mode=TwoWay}"
-                                Minimum="0.0"
-                                Maximum="1.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding FilterCutoffDisplay}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Hz do Filtro (para dar target de frequências altas ou baixas) -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Q" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical" Value="{Binding FilterQ, Mode=TwoWay}"
-                                Minimum="0.7"
-                                Maximum="10.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding FilterQ, StringFormat={}{0:F1}}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Rate do Vibrato (quantas vezes vai acontecer por segundo/ms) -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Vibrato Rate" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical"
-                                Value="{Binding VibratoRate, Mode=TwoWay}"
-                                Minimum="0.1"
-                                Maximum="20.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding VibratoRate, StringFormat={}{0:F1}Hz}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Depth do Vibrato (o quão agressivo o vibrato vai ser) -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Vibrato Depth" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical"
-                                Value="{Binding VibratoDepth, Mode=TwoWay}"
-                                Minimum="0.0"
-                                Maximum="20.0"
-                                Height="100"
-                                Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding VibratoDepth, StringFormat={}{0:F1}Hz}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Rate do Tremolo (quantas vezes vai acontecer por segundo/ms) -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Tremolo Rate" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                            HorizontalAlignment="Center"
-                            Orientation="Vertical" 
-                            Value="{Binding TremoloRate, Mode=TwoWay}" 
-                            Minimum="0.1" 
-                            Maximum="20.0" 
-                            Height="100" 
-                            Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding TremoloRate, StringFormat={}{0:F1}Hz}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <!-- Depth do Tremolo (o quão agressivo o tremolo vai ser) -->
-                    <StackPanel Orientation="Vertical" Margin="15,10">
-                        <Label Content="Tremolo Depth" Foreground="White" HorizontalAlignment="Center"/>
-                        <Slider Style="{StaticResource VerticalGreenSlider}"
-                            HorizontalAlignment="Center"
-                            Orientation="Vertical" 
-                            Value="{Binding TremoloDepth, Mode=TwoWay}" 
-                            Minimum="0.0" 
-                            Maximum="1.0"
-                            Height="100" 
-                            Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding TremoloDepth, StringFormat={}{0:P0}}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+    <Grid Background="{StaticResource DarkBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <Border Grid.Row="0" Background="{StaticResource CardBackground}" 
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1">
+            <Grid Margin="20,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Waveform Section -->
+                <StackPanel Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Text="WAVEFORM" 
+                               Foreground="{StaticResource TextSecondary}" 
+                               FontSize="10" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding Waveforms}" 
+                              SelectedItem="{Binding SelectedWaveform}"
+                              ItemTemplate="{StaticResource WaveformItemTemplate}"
+                              Style="{StaticResource ModernComboBoxStyle}"
+                              ItemContainerStyle="{StaticResource ModernComboBoxItemStyle}"
+                              MinWidth="180"/>
+                </StackPanel>
+
+                <!-- Octave Controls -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Content="◀" 
+                            Command="{Binding DecreaseOctaveCommand}" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Width="40" Height="40" 
+                            FontSize="14"/>
+                    <Border Background="{StaticResource CardBackground}" 
+                            BorderBrush="{StaticResource BorderColor}" 
+                            BorderThickness="1" 
+                            CornerRadius="6" 
+                            Margin="10,0">
+                        <StackPanel Orientation="Vertical" Margin="20,8">
+                            <TextBlock Text="OCTAVE" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="10" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding Octave}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="24" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Content="▶" 
+                            Command="{Binding IncreaseOctaveCommand}" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Width="40" Height="40" 
+                            FontSize="14"/>
+                </StackPanel>
+
+                <!-- Preset Management -->
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock Text="PRESETS" 
+                               Foreground="{StaticResource TextSecondary}" 
+                               FontSize="10" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox ItemsSource="{Binding Presets}"
+                                  SelectedItem="{Binding SelectedPreset}"
+                                  DisplayMemberPath="Name"
+                                  Style="{StaticResource ModernComboBoxStyle}"
+                                  ItemContainerStyle="{StaticResource ModernComboBoxItemStyle}"
+                                  MinWidth="120"/>
+                        <TextBox Text="{Binding NewPresetName, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 MinWidth="120" 
+                                 Margin="10,0,0,0"/>
+                        <Button Content="SAVE" 
+                                Command="{Binding SavePresetCommand}" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Margin="10,0,0,0" Width="81"/>
+                        <Button Content="DELETE" 
+                                Command="{Binding DeletePresetCommand}" 
+                                Foreground="White"
+                                Margin="5,0,0,0" Width="79">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                                    <Setter Property="Background" Value="#E74C3C"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#C0392B"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="#E74C3C" BlurRadius="10" Opacity="0.3"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>
-    </DockPanel>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Oscilloscope Card -->
+            <Border Grid.Row="0" 
+                    Background="{DynamicResource DarkBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" 
+                    BorderThickness="1" 
+                    CornerRadius="12"
+                    Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.1"/>
+                </Border.Effect>
+                <Grid>
+                    <View:Oscilloscope DataContext="{Binding OscilloscopeViewmodel}" 
+                                       Margin="20"/>
+                    <!-- Oscilloscope label -->
+                    <TextBlock Text="OSCILLOSCOPE" 
+                               Foreground="{StaticResource TextSecondary}" 
+                               FontSize="10" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="20,15"/>
+                </Grid>
+            </Border>
+
+            <!-- Controls Section -->
+            <Border Grid.Row="1" 
+                    Background="{StaticResource CardBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" 
+                    BorderThickness="1" 
+                    CornerRadius="12">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.1"/>
+                </Border.Effect>
+                <Grid>
+                    <TextBlock Text="AUDIO CONTROLS" 
+                               Foreground="{StaticResource TextSecondary}" 
+                               FontSize="10" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="20,15"/>
+
+                    <!-- Enhanced sliders layout -->
+                    <UniformGrid Rows="1" Columns="8" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Margin="20,40,20,30">
+
+                        <!-- Attack -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="ATTACK" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical"
+                                    Value="{Binding AttackSeconds, Mode=TwoWay}"
+                                    Minimum="0.01"
+                                    Maximum="2.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding AttackSeconds, StringFormat={}{0:F2}s}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Release -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="RELEASE" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical"
+                                    Value="{Binding ReleaseSeconds, Mode=TwoWay}"
+                                    Minimum="0.01"
+                                    Maximum="5.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding ReleaseSeconds, StringFormat={}{0:F2}s}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Cutoff -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="CUTOFF" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical"
+                                    Value="{Binding FilterCutoff, Mode=TwoWay}"
+                                    Minimum="0.0"
+                                    Maximum="1.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding FilterCutoffDisplay}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Q -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="Q" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical" 
+                                    Value="{Binding FilterQ, Mode=TwoWay}"
+                                    Minimum="0.7"
+                                    Maximum="10.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding FilterQ, StringFormat={}{0:F1}}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Vibrato Rate -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="VIB RATE" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical"
+                                    Value="{Binding VibratoRate, Mode=TwoWay}"
+                                    Minimum="0.1"
+                                    Maximum="20.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding VibratoRate, StringFormat={}{0:F1}Hz}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Vibrato Depth -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="VIB DEPTH" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical"
+                                    Value="{Binding VibratoDepth, Mode=TwoWay}"
+                                    Minimum="0.0"
+                                    Maximum="20.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding VibratoDepth, StringFormat={}{0:F1}Hz}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Tremolo Rate -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="TREM RATE" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical" 
+                                    Value="{Binding TremoloRate, Mode=TwoWay}" 
+                                    Minimum="0.1" 
+                                    Maximum="20.0" 
+                                    Height="120"/>
+                            <TextBlock Text="{Binding TremoloRate, StringFormat={}{0:F1}Hz}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+
+                        <!-- Tremolo Depth -->
+                        <StackPanel Orientation="Vertical" Margin="15">
+                            <TextBlock Text="TREM DEPTH" 
+                                       Foreground="{StaticResource TextSecondary}" 
+                                       FontSize="9" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                                    Orientation="Vertical" 
+                                    Value="{Binding TremoloDepth, Mode=TwoWay}" 
+                                    Minimum="0.0" 
+                                    Maximum="1.0"
+                                    Height="120"/>
+                            <TextBlock Text="{Binding TremoloDepth, StringFormat={}{0:P0}}" 
+                                       Foreground="{StaticResource AccentColor}" 
+                                       FontSize="11"
+                                       FontWeight="Medium"
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </UniformGrid>
+                </Grid>
+            </Border>
+        </Grid>
+        <!-- Piano Keyboard Section -->
+        <Border Grid.Row="2" 
+                Background="{StaticResource CardBackground}" 
+                BorderBrush="{StaticResource BorderColor}" 
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Piano Keys -->
+                <Grid Grid.Column="0" HorizontalAlignment="Center" 
+                      VerticalAlignment="Center" 
+                      Width="400" Height="180" 
+                      Margin="20">
+                    <!-- White Keys -->
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[0]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="0,0,0,0"   
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[2]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="50,0,0,0"  
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[4]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="100,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[5]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="150,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[7]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="200,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[9]}"  
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="250,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[11]}" 
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="300,0,0,10" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave" VerticalAlignment="Bottom"/>
+                    <Rectangle Style="{StaticResource WhiteKeyStyle}" 
+                               DataContext="{Binding PianoKeys[12]}" 
+                               Width="50" Height="160" 
+                               HorizontalAlignment="Left" 
+                               Margin="350,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+
+                    <!-- Black Keys -->
+                    <Rectangle Style="{StaticResource BlackKeyStyle}" 
+                               DataContext="{Binding PianoKeys[1]}"  
+                               Width="30" Height="100" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="35,0,0,0"  
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource BlackKeyStyle}" 
+                               DataContext="{Binding PianoKeys[3]}"  
+                               Width="30" Height="100" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="85,0,0,0"  
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource BlackKeyStyle}" 
+                               DataContext="{Binding PianoKeys[6]}"  
+                               Width="30" Height="100" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="185,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource BlackKeyStyle}" 
+                               DataContext="{Binding PianoKeys[8]}"  
+                               Width="30" Height="100" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="235,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                    <Rectangle Style="{StaticResource BlackKeyStyle}" 
+                               DataContext="{Binding PianoKeys[10]}" 
+                               Width="30" Height="100" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="285,0,0,0" 
+                               PreviewMouseDown="Key_PreviewMouseDown" 
+                               PreviewMouseUp="Key_PreviewMouseUp" 
+                               MouseLeave="Key_MouseLeave"/>
+                </Grid>
+
+                <!-- Logo -->
+                <StackPanel Grid.Column="1" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Right" 
+                           Margin="20">
+                    <Image Source="/Assets/CeenthFull.png"
+                           Height="80" Width="80"
+                           Opacity="0.3"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

@@ -197,15 +197,27 @@ namespace ceenth.Viewmodel
             Preset presetToSave;
             bool isNew = false;
 
-            // Se um preset de usar está selecionado, UPDATE no preset existente.
-            if (SelectedPreset != null && SelectedPreset.IsUserPreset)
+            // If a user preset is selected, UPDATE it by loading it fresh from the database
+            if (SelectedPreset != null && SelectedPreset.IsUserPreset && SelectedPreset.IdPreset > 0)
             {
-                presetToSave = SelectedPreset;
+                // Use the selected preset directly - UpdatePreset will handle the tracking
+                presetToSave = new Preset
+                {
+                    IdPreset = SelectedPreset.IdPreset,
+                    IsUserPreset = true
+                };
+
+                if (presetToSave == null)
+                {
+                    // Fallback: create new if somehow the preset doesn't exist anymore
+                    presetToSave = new Preset { IsUserPreset = true };
+                    isNew = true;
+                }
             }
             // Caso contrário, cria um novo preset.
             else
             {
-                presetToSave = new Preset();
+                presetToSave = new Preset { IsUserPreset = true };
                 isNew = true;
             }
 

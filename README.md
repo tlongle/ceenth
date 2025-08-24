@@ -136,24 +136,6 @@ _For packaged builds, see Releases: https://github.com/tlongle/ceenth/releases_
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- PUBLISH -->
-## Publish (Framework-Dependent, Smaller Size)
-
-Create a lean Windows build that relies on the .NET 8 Desktop Runtime:
-
-```sh
-dotnet publish -c Release -r win-x64 --no-self-contained \
-  -p:PublishTrimmed=true -p:PublishReadyToRun=true -o publish
-```
-
-> Note: if you use reflection-heavy libraries, trimming might require a trimmer descriptor.  
-> SQLite native bits are included via NuGet; ensure they’re copied to output on publish.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- ROADMAP -->
 ## Roadmap
 

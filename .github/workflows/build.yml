@@ -1,44 +1,41 @@
 name: Build & Release Ceenth
 
 on:
-  push:
-    tags:
-      - "v*"                # triggers on tag push like v1.0.0
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to release (e.g. v1.0.0)'
-        required: false    # optional if running manually
+        description: 'Tag for the release (e.g., v1.0.0)'
+        required: true
 
 jobs:
-  build:
+  build-and-release:
     runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # important to fetch all tags
-          ref: ${{ github.event.inputs.tag != '' && github.event.inputs.tag || github.ref_name }}
+          fetch-depth: 0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Restore NuGet packages
+        run: dotnet restore Ceenth.csproj
 
-      - name: Build and Publish
-        run: dotnet publish -c Release -r win-x64 -p:SelfContained=false -p:PublishSingleFile=false -p:PublishTrimmed=false --output ./publish
+      - name: Publish Ceenth
+        run: |
+          dotnet publish Ceenth.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
 
-      - name: Zip published app
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./Ceenth.zip
+      - name: Zip the published files
+        run: Compress-Archive -Path ./publish/* -DestinationPath Ceenth.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          tag_name: ${{ github.event.inputs.tag }}
           files: Ceenth.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}

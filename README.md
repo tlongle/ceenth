@@ -2,12 +2,15 @@
 
 
 
+A basic **standalone** synthesizer app, with a basic effects suite and waveform preview.
 
-A basic synthesizer made using C# & WPF for a final school project for the Programming II class.
+*Now updated to not use the shitty .NET Framework and ADO.NET Entity Framework!*
+
+The initial scope of this project was to be used as a final school project for the **Programming II** class, but ever since then, it has been updated with loads of goodies and a more up-to-date design language.
 
 The focus of this project is to apply basic knowledge of the **MVVM (Model-View-Viewmodel)** architecture, also applying basic **CRUD (Create, Remove, Update, Delete)** operations.
 
-The polyphonic audio engine was made using the Naudio library, making it possible to do basic effects, filters, and things of the sort.
+The polyphonic audio engine was made using the [NAudio](https://github.com/naudio/NAudio) library, making it possible to do basic effects, filters, and more.
 
 ## Demo
 
@@ -16,16 +19,16 @@ The polyphonic audio engine was made using the Naudio library, making it possibl
 
 ## Features
 
+- Up-to-date design language, made using **XAML**
 - Polyphonic engine, which supports chording
-- Basic low-pass filter (Filter Cutoff + Q)
-- Attack and Release sliders
-- Basic effects for sound manipulation (Tremolo & Vibrato)
-- Preset support (comes with four factory presets)
-- Waveform preview via a basic Oscilloscope
-- Basic support to play notes with your computer's keyboard
+- Basic low-pass filter (Filter cutoff + Q - which is at what Hz the filter applies to)
+- ADSR suite *(only attack and release for now)*
+- Basic effects for sound manipulation *(tremolo, vibrato, and more to be added soon)*
+- Preset support *(comes with four factory presets)*
+- Waveform preview via a basic **Oscilloscope**
 
-### **To implement:**
 
-- MIDI support
-- More effects (like Reverb, completing the ADSR suite, etc...)
-- Design to be changed
+## To-do
+
+- *MIDI support - can be added via NAudio library*
+- *Finish effects suite - add a basic Reverb, and other effects*

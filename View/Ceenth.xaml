@@ -307,8 +307,8 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
-        <!-- Wave form icons -->
+      
+        <!-- Icones feitos pelo Gemini (obrigado por me salvares do trabalho de fazer isto de maneira diferente) -->
         <PathGeometry x:Key="SineIcon">M0,10 C5,0 15,20 20,10</PathGeometry>
         <PathGeometry x:Key="SquareIcon">M0,0 L0,10 L10,10 L10,20 L20,20</PathGeometry>
         <PathGeometry x:Key="SawtoothIcon">M0,20 L20,0 L20,20 Z</PathGeometry>
@@ -340,8 +340,8 @@
             </StackPanel>
         </DataTemplate>
 
-        <!-- Vertical slider: only the thumb is LimeGreen -->
-        <Style x:Key="ModernVerticalSlider" TargetType="{x:Type Slider}">
+        <!-- Slider verde :) -->
+        <Style x:Key="VerticalGreenSlider" TargetType="{x:Type Slider}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Slider}">
@@ -373,9 +373,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
-
     <Grid Background="{StaticResource DarkBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -722,7 +720,6 @@
                 </Grid>
             </Border>
         </Grid>
-
         <!-- Piano Keyboard Section -->
         <Border Grid.Row="2" 
                 Background="{StaticResource CardBackground}" 

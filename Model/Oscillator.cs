@@ -7,11 +7,12 @@ using NAudio.Wave;
 
 namespace ceenth.Model
 {
+    /// <summary>
     /// A classe Oscillator, vai tratar de geraçao de som, a partir de Waveforms
     /// Chama sempre a classe ISampleProvider da biblioteca NAudio, para a geraçao do som 
     /// e os cálculos necessários a serem feitos para gerar N waveform
-    /// 
-    
+    /// </summary>
+
     // Tipos de waveform
 
     public enum WaveformTypes
@@ -62,7 +63,7 @@ namespace ceenth.Model
         public Oscillator(int sampleRate = 44100, int channels = 1)
         {
             _waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channels);
-            _frequency = 440.0; // Nota por defeito é A4 ()
+            _frequency = 440.0; // Nota por defeito é A4 (Lá no oitavo 4)
             _amplitude = 0.25;  // Amplitude da wavetable por defeito é 0.25
             _waveform = WaveformTypes.Sine;
             _lfoBuffer = new float[1];
@@ -71,7 +72,7 @@ namespace ceenth.Model
         public int Read(float[] buffer, int offset, int count)
         {
             double lfoValue = 0;
-            // A small buffer to read one sample at a time from the LFO
+            // Um buffer para ler uma sample de cada vez do LFO, se estiver conectado   
             if (LfoSource != null)
             {
                 LfoSource.Read(_lfoBuffer, 0, 1);
@@ -80,20 +81,23 @@ namespace ceenth.Model
 
             for (int i = 0; i < count; i++)
             {
-                // If an LFO is connected, read one sample from it
+                // Se um LFO estiver conectado, ler o valor do LFO
                 if (LfoSource != null && _lfoBuffer != null)
                 {
                     LfoSource.Read(_lfoBuffer, 0, 1);
                     lfoValue = _lfoBuffer[0];
                 }
 
-                // Calculate the final modulated frequency for this specific sample
+                // Calcular a frequência modulada pelo LFO
                 double modulatedFrequency = _frequency + (lfoValue * LfoDepth);
 
-                // Calculate phase increment based on the modulated frequency
+                // Calcular o incremento de fase baseado na frequência modulada
                 double phaseIncrement = modulatedFrequency / _waveFormat.SampleRate;
 
                 float sampleValue = 0;
+                // Calcular o valor do sample baseado no tipo de waveform
+                // Cada waveform tem uma fórmula diferente para calcular o valor do sample:
+                // Dando em sons diferentes, como Sine, Square, Saw e Triangle
                 switch (_waveform)
                 {
                     case WaveformTypes.Sine:
@@ -109,10 +113,11 @@ namespace ceenth.Model
                         sampleValue = (float)(_amplitude * (4 * Math.Abs(_phase - 0.5) - 1));
                         break;
                 }
-
+                // Aplicar a amplitude e o valor do LFO
                 buffer[offset + i] = sampleValue;
-
                 _phase += phaseIncrement;
+
+                // Normalizar a fase para o intervalo [0, 1)
                 if (_phase >= 1.0)
                 {
                     _phase -= 1.0;

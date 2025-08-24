@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ceenth.Viewmodel
 {
-    // Uma versao modificada de um RelayCommand standard
+    // Uma versao modificada de um command standard
     // Esta versao, faz com que o código seja mais straight forward em questoes de execuçao
     // Isto faz com que o _canExecute seja opcional de usar
     // Exemplo:

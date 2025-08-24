@@ -21,9 +21,13 @@ namespace ceenth.Model
     /// o som que está a tocar nas colunas do dispositivo
     internal class VisualizerSampleProvider : ISampleProvider
     {
+        // _source é o ISampleProvider que vai buscar a waveform
         private readonly ISampleProvider _source;
+        // _circularBuffer é um buffer circular que guarda os samples lidos
         private readonly float[] _circularBuffer;
+        // _lockObject é usado para garantir que o acesso ao buffer circular é thread-safe
         private readonly object _lockObject = new object();
+        // _writePosition é a posição atual de escrita no buffer circular
         private int _writePosition;
         public WaveFormat WaveFormat => _source.WaveFormat;
         public VisualizerSampleProvider(ISampleProvider source, int bufferSize = 1024) { _source = source; _circularBuffer = new float[bufferSize]; }
@@ -40,6 +44,7 @@ namespace ceenth.Model
             }
             return samplesRead;
         }
+
         public void GetWaveformData(float[] destinationBuffer)
         {
             lock (_lockObject)
@@ -59,13 +64,24 @@ namespace ceenth.Model
     /// É o que faz o som ficar mais "abafado"
     public class FilterSampleProvider : ISampleProvider
     {
+        // _source vai buscar a waveform ao ISampleProvider
         private readonly ISampleProvider _source;
+        // Número de canais do áudio (mono, stereo, etc.)
         private readonly int _channels;
+        // Coeficientes do filtro
         private double a0, a1, a2, b1, b2;
+        // Arrays para armazenar os estados anteriores do filtro para cada canal
         private readonly float[] x1, x2, y1, y2;
         public WaveFormat WaveFormat => _source.WaveFormat;
         public FilterSampleProvider(ISampleProvider source) { _source = source; _channels = source.WaveFormat.Channels; x1 = new float[_channels]; x2 = new float[_channels]; y1 = new float[_channels]; y2 = new float[_channels]; }
+        /// <summary>
+        /// Este código trata de criar o low-pass filter
+        /// Estes cálculos são demasiado complicados para eu compreender
+        /// E só os consegui executar com ajuda da documentação e de inteligência artificial
+        /// Funciona! dentro dos possíveis...
+        /// </summary>
         public void SetLowPassFilter(float sampleRate, float cutoff, float q) { q = Math.Max(0.001f, q); double w0 = 2 * Math.PI * cutoff / sampleRate; double cosw0 = Math.Cos(w0); double sinw0 = Math.Sin(w0); double alpha = sinw0 / (2 * q); double b0_temp = (1 - cosw0) / 2; b1 = 1 - cosw0; b2 = (1 - cosw0) / 2; a0 = 1 + alpha; a1 = -2 * cosw0; a2 = 1 - alpha; b2 = b2 / a0; b1 = b1 / a0; a2 = a2 / a0; a1 = a1 / a0; a0 = b0_temp / a0; }
+        /// Este código aplica o low-pass filter à função "Read"
         public int Read(float[] buffer, int offset, int count) { int samplesRead = _source.Read(buffer, offset, count); for (int i = 0; i < samplesRead; i++) { int channel = i % _channels; float input = buffer[offset + i]; float result = (float)(a0 * input + a1 * x1[channel] + a2 * x2[channel] - b1 * y1[channel] - b2 * y2[channel]); x2[channel] = x1[channel]; x1[channel] = input; y2[channel] = y1[channel]; y1[channel] = result; buffer[offset + i] = result; } return samplesRead; }
     }
 
@@ -73,7 +89,9 @@ namespace ceenth.Model
     /// Usa um oscilador de baixa frequência (LFO) para modular o volume.
     internal class TremoloSampleProvider : ISampleProvider
     {
+        // Mesma coisa do código de cima - o ISampleProvider vai buscar a waveform
         private readonly ISampleProvider _source;
+        // Faz um oscillator novo, que neste caso é o LFO (oscilador de baixa frequência)
         private readonly Oscillator _lfo;
         private float _depth;
         private readonly float[] _lfoBuffer;
@@ -86,6 +104,8 @@ namespace ceenth.Model
 
     internal class SynthVoice
     {
+        // Esta classe representa uma "voz" do sintetizador.
+        // Cada voz pode tocar uma nota diferente ao mesmo tempo (polifonia).
         public AdsrSampleProvider Adsr { get; set; }
         public ISampleProvider SignalChain { get; set; }
         public bool IsOn { get; set; }
@@ -93,32 +113,38 @@ namespace ceenth.Model
 
         public SynthVoice()
         {
-            IsOn = false;
+            IsOn = false; // Inicialmente, a voz está desligada.
         }
     }
 
     public class PolyphonicAudioEngine : IDisposable
     {
+        // _waveOut é o dispositivo de saída de áudio (colunas, auscultadores, etc.)
         private readonly WaveOutEvent _waveOut;
+        // _mixer mistura todas as vozes para tocar ao mesmo tempo
         private readonly MixingSampleProvider _mixer;
+        // Lista de todas as vozes disponíveis para tocar notas
         private readonly List<SynthVoice> _voices;
         private readonly int _sampleRate;
+        // _visualizerProvider serve para mostrar a waveform no osciloscópio
         private readonly VisualizerSampleProvider _visualizerProvider;
 
-        #region Properties
-        public float AttackSeconds { get; set; } = 0.01f;
-        public float ReleaseSeconds { get; set; } = 0.05f;
-        public WaveformTypes Waveform { get; set; }
-        public float FilterCutoff { get; set; } = 20000f;
-        public float FilterQ { get; set; } = 1.0f;
-        public float VibratoRate { get; set; } = 5f;
-        public float VibratoDepth { get; set; } = 0f;
-        public float TremoloRate { get; set; } = 5f;
-        public float TremoloDepth { get; set; } = 0f;
+        #region Propriedades
+        // Propriedades para controlar o som gerado pelo sintetizador
+        public float AttackSeconds { get; set; } = 0.01f; // Tempo de ataque da nota
+        public float ReleaseSeconds { get; set; } = 0.05f; // Tempo de libertação da nota
+        public WaveformTypes Waveform { get; set; } // Tipo de waveform (seno, quadrada, etc.)
+        public float FilterCutoff { get; set; } = 20000f; // Frequência de corte do filtro
+        public float FilterQ { get; set; } = 1.0f; // Qualidade do filtro
+        public float VibratoRate { get; set; } = 5f; // Velocidade do vibrato
+        public float VibratoDepth { get; set; } = 0f; // Intensidade do vibrato
+        public float TremoloRate { get; set; } = 5f; // Velocidade do tremolo
+        public float TremoloDepth { get; set; } = 0f; // Intensidade do tremolo
         #endregion
 
         public PolyphonicAudioEngine(int sampleRate = 44100, int channelCount = 1, int voiceCount = 16)
         {
+            // Inicialização dos componentes principais do motor de áudio
             _sampleRate = sampleRate;
             _waveOut = new WaveOutEvent { DesiredLatency = 100 };
             _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channelCount)) { ReadFully = true };
@@ -126,7 +152,7 @@ namespace ceenth.Model
 
             for (int i = 0; i < voiceCount; i++)
             {
-                _voices.Add(new SynthVoice());
+                _voices.Add(new SynthVoice()); // Cria as vozes disponíveis
             }
 
             _visualizerProvider = new VisualizerSampleProvider(_mixer, 1024);
@@ -134,23 +160,26 @@ namespace ceenth.Model
             _waveOut.Init(_visualizerProvider);
             _waveOut.Play();
 
-            // Subscribe to the event that tells us when a sound has finished
+            // Subscreve o evento para saber quando um som termina
             _mixer.MixerInputEnded += OnMixerInputEnded;
         }
 
         public void GetWaveformData(float[] buffer)
         {
+            // Vai buscar os dados da waveform para o osciloscópio
             _visualizerProvider.GetWaveformData(buffer);
         }
 
         public void NoteOn(double frequency)
         {
+            // Procura uma voz livre para tocar a nova nota
             var freeVoice = _voices.FirstOrDefault(v => v.SignalChain == null);
             if (freeVoice == null) return;
 
             freeVoice.IsOn = true;
             freeVoice.Frequency = frequency;
 
+            // Cria o oscilador para gerar o som da nota
             var oscillator = new Oscillator(_sampleRate, 1)
             {
                 Waveform = this.Waveform,
@@ -159,6 +188,7 @@ namespace ceenth.Model
             };
             oscillator.Reset();
 
+            // Aplica o envelope ADSR à nota
             var adsr = new AdsrSampleProvider(oscillator)
             {
                 AttackSeconds = this.AttackSeconds,
@@ -166,40 +196,43 @@ namespace ceenth.Model
             };
             freeVoice.Adsr = adsr;
 
+            // Aplica o filtro low-pass
             var filter = new FilterSampleProvider(adsr);
             filter.SetLowPassFilter(_sampleRate, this.FilterCutoff, this.FilterQ);
 
+            // Adiciona vibrato (modulação de frequência)
             var vibratoLfo = new Oscillator(_sampleRate, 1) { Frequency = this.VibratoRate, Amplitude = 1.0 };
             oscillator.LfoSource = vibratoLfo;
             oscillator.LfoDepth = this.VibratoDepth;
 
+            // Adiciona tremolo (modulação de volume)
             var tremoloLfo = new Oscillator(_sampleRate, 1) { Frequency = this.TremoloRate, Amplitude = 1.0 };
             var tremolo = new TremoloSampleProvider(filter, tremoloLfo) { Depth = this.TremoloDepth };
 
-            // --- FIX: Store a reference to the final link in the chain ---
             freeVoice.SignalChain = tremolo;
 
+            // Adiciona a voz ao mixer para tocar
             _mixer.AddMixerInput(freeVoice.SignalChain);
         }
 
         public void NoteOff(double frequency)
         {
+            // Procura a voz que está a tocar a nota e inicia a fase de libertação
             var activeVoice = _voices.FirstOrDefault(v => v.IsOn && Math.Abs(v.Frequency - frequency) < 0.001);
             if (activeVoice != null)
             {
                 activeVoice.IsOn = false;
-                // This starts the release phase. The MixerInputEnded event will handle cleanup.
+                // Isto inicia a fase de release. O evento MixerInputEnded trata da limpeza.
                 activeVoice.Adsr?.Stop();
             }
         }
 
         private void OnMixerInputEnded(object sender, SampleProviderEventArgs e)
         {
-            // --- FIX: Find the voice by matching the entire signal chain ---
+            // Quando uma voz termina, marca-a como livre para ser reutilizada
             var finishedVoice = _voices.FirstOrDefault(v => v.SignalChain == e.SampleProvider);
             if (finishedVoice != null)
             {
-                // Mark the voice as free so it can be used by a new note
                 finishedVoice.SignalChain = null;
                 finishedVoice.Frequency = 0;
                 finishedVoice.Adsr = null;
@@ -208,6 +241,7 @@ namespace ceenth.Model
 
         public void Dispose()
         {
+            // Liberta os recursos do dispositivo de áudio
             _waveOut.Dispose();
         }
     }

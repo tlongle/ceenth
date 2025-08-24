@@ -307,7 +307,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-      
+
         <!-- Icones feitos pelo Gemini (obrigado por me salvares do trabalho de fazer isto de maneira diferente) -->
         <PathGeometry x:Key="SineIcon">M0,10 C5,0 15,20 20,10</PathGeometry>
         <PathGeometry x:Key="SquareIcon">M0,0 L0,10 L10,10 L10,20 L20,20</PathGeometry>
@@ -549,7 +549,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical"
                                     Value="{Binding AttackSeconds, Mode=TwoWay}"
                                     Minimum="0.01"
@@ -571,7 +571,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical"
                                     Value="{Binding ReleaseSeconds, Mode=TwoWay}"
                                     Minimum="0.01"
@@ -593,7 +593,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical"
                                     Value="{Binding FilterCutoff, Mode=TwoWay}"
                                     Minimum="0.0"
@@ -615,7 +615,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical" 
                                     Value="{Binding FilterQ, Mode=TwoWay}"
                                     Minimum="0.7"
@@ -637,7 +637,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical"
                                     Value="{Binding VibratoRate, Mode=TwoWay}"
                                     Minimum="0.1"
@@ -659,7 +659,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical"
                                     Value="{Binding VibratoDepth, Mode=TwoWay}"
                                     Minimum="0.0"
@@ -681,7 +681,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical" 
                                     Value="{Binding TremoloRate, Mode=TwoWay}" 
                                     Minimum="0.1" 
@@ -703,7 +703,7 @@
                                        FontWeight="Bold" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,10"/>
-                            <Slider Style="{StaticResource ModernVerticalSlider}"
+                            <Slider Style="{StaticResource VerticalGreenSlider}"
                                     Orientation="Vertical" 
                                     Value="{Binding TremoloDepth, Mode=TwoWay}" 
                                     Minimum="0.0" 

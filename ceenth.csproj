@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -12,6 +12,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>false</PublishTrimmed>   
     <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
+	<ApplicationIcon>ceenth.ico</ApplicationIcon>
+	<Win32Icon>ceenth.ico</Win32Icon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,5 +42,6 @@
     <Resource Include="Assets\**\*" />
     <Resource Include="ceenth.ico" />
   </ItemGroup>
+
 
 </Project>

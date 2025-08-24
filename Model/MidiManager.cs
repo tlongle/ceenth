@@ -58,20 +58,20 @@ namespace ceenth.Model
 
         private void MidiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
         {
-            // Check if the message is a NoteOn event
+            // Verifica se a mensagem é um NoteOn com velocity > 0
             if (e.MidiEvent is NoteOnEvent noteOnEvent && noteOnEvent.Velocity > 0)
             {
-                // Convert MIDI note number to frequency
+                // Converte o número da nota MIDI para frequência em Hz
                 double frequency = 440.0 * Math.Pow(2.0, (noteOnEvent.NoteNumber - 69.0) / 12.0);
-                // Raise our custom event
+                // Lança o evento customizado
                 NoteOnReceived?.Invoke(this, new MidiNoteEventArgs(noteOnEvent.NoteNumber, frequency));
             }
-            // Check if the message is a NoteOff event (or a NoteOn with 0 velocity)
+            // Verifica se a mensagem é um NoteOff ou um NoteOn com velocity 0 (que é equivalente a NoteOff)
             else if (e.MidiEvent.CommandCode == MidiCommandCode.NoteOff || (e.MidiEvent is NoteOnEvent noteOnEventOff && noteOnEventOff.Velocity == 0))
             {
                 int noteNumber = (e.MidiEvent as NoteEvent).NoteNumber;
                 double frequency = 440.0 * Math.Pow(2.0, (noteNumber - 69.0) / 12.0);
-                // Raise our custom event
+                // Lança o evento customizado
                 NoteOffReceived?.Invoke(this, new MidiNoteEventArgs(noteNumber, frequency));
             }
         }

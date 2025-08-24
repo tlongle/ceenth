@@ -20,7 +20,7 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <!-- Enhanced color palette -->
+        <!-- Color palette / Cores usadas -->
         <SolidColorBrush x:Key="DarkBackground" Color="#1A1A1D"/>
         <SolidColorBrush x:Key="CardBackground" Color="#2D2D35"/>
         <SolidColorBrush x:Key="AccentColor" Color="LimeGreen"/>
@@ -30,7 +30,7 @@
         <SolidColorBrush x:Key="BorderColor" Color="#404040"/>
         <SolidColorBrush x:Key="CardBackgroundHover" Color="#26262C"/>
 
-        <!-- Modern button style -->
+        <!-- Modern button style / Estilo de button moderno -->
         <Style x:Key="ModernButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource AccentColor}"/>
             <Setter Property="Foreground" Value="White"/>
@@ -66,7 +66,7 @@
             </Setter>
         </Style>
 
-        <!-- Modern ComboBox style (fixed open + hover visuals) -->
+        <!-- Modern ComboBox style / Combobox moderna -->
         <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="{StaticResource CardBackground}"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -97,8 +97,6 @@
                                                       IsHitTestVisible="False"/>
                                 </Grid>
                             </Border>
-
-                            <!-- Click surface -->
                             <ToggleButton x:Name="toggleButton"
                                           Background="Transparent"
                                           BorderBrush="Transparent"
@@ -111,8 +109,6 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-
-                            <!-- Arrow -->
                             <Path x:Name="arrow"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
@@ -125,8 +121,6 @@
                                     <RotateTransform Angle="0"/>
                                 </Path.RenderTransform>
                             </Path>
-
-                            <!-- Popup -->
                             <Popup x:Name="PART_Popup"
                                    AllowsTransparency="True"
                                    Placement="Bottom"
@@ -149,7 +143,6 @@
                                 </Border>
                             </Popup>
                         </Grid>
-
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource CardBackgroundHover}"/>
@@ -177,7 +170,7 @@
             </Setter>
         </Style>
 
-        <!-- ComboBox items -->
+        <!-- ComboBox items / Estilo itens da combobox -->
         <Style x:Key="ModernComboBoxItemStyle" TargetType="ComboBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -220,7 +213,7 @@
             </Setter>
         </Style>
 
-        <!-- Modern TextBox style -->
+        <!-- Modern TextBox style / Estilo Textbox "moderno" -->
         <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
             <Setter Property="Background" Value="{StaticResource CardBackground}"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -259,7 +252,7 @@
             </Setter>
         </Style>
 
-        <!-- Piano key styles -->
+        <!-- Piano key styles / Estilos keys de piano -->
         <Style TargetType="Rectangle" x:Key="WhiteKeyStyle">
             <Setter Property="Fill">
                 <Setter.Value>
@@ -381,7 +374,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header Section -->
+        <!-- Header -->
         <Border Grid.Row="0" Background="{StaticResource CardBackground}" 
                 BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1">
             <Grid Margin="20,15">
@@ -391,7 +384,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Waveform Section -->
+                <!-- Waveform -->
                 <StackPanel Grid.Column="0" Orientation="Vertical">
                     <TextBlock Text="WAVEFORM" 
                                Foreground="{StaticResource TextSecondary}" 
@@ -406,7 +399,7 @@
                               MinWidth="180"/>
                 </StackPanel>
 
-                <!-- Octave Controls -->
+                <!-- Octave / Oitavos -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" 
                            HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="◀" 
@@ -439,7 +432,7 @@
                             FontSize="14"/>
                 </StackPanel>
 
-                <!-- Preset Management -->
+                <!-- Preset Management / Management de presets -->
                 <StackPanel Grid.Column="2" Orientation="Vertical">
                     <TextBlock Text="PRESETS" 
                                Foreground="{StaticResource TextSecondary}" 
@@ -486,14 +479,14 @@
             </Grid>
         </Border>
 
-        <!-- Main Content Area -->
+        <!-- Main Area / Area principal -->
         <Grid Grid.Row="1" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Oscilloscope Card -->
+            <!-- Oscilloscope / Card do osciloscopio -->
             <Border Grid.Row="0" 
                     Background="{DynamicResource DarkBackground}" 
                     BorderBrush="{StaticResource BorderColor}" 
@@ -506,7 +499,6 @@
                 <Grid>
                     <View:Oscilloscope DataContext="{Binding OscilloscopeViewmodel}" 
                                        Margin="20"/>
-                    <!-- Oscilloscope label -->
                     <TextBlock Text="OSCILLOSCOPE" 
                                Foreground="{StaticResource TextSecondary}" 
                                FontSize="10" 
@@ -517,7 +509,7 @@
                 </Grid>
             </Border>
 
-            <!-- Controls Section -->
+            <!-- Sliders -->
             <Border Grid.Row="1" 
                     Background="{StaticResource CardBackground}" 
                     BorderBrush="{StaticResource BorderColor}" 
@@ -534,8 +526,6 @@
                                HorizontalAlignment="Left" 
                                VerticalAlignment="Top" 
                                Margin="20,15"/>
-
-                    <!-- Enhanced sliders layout -->
                     <UniformGrid Rows="1" Columns="8" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
@@ -607,7 +597,7 @@
                                        Margin="0,10,0,0"/>
                         </StackPanel>
 
-                        <!-- Q -->
+                        <!-- Q/Resonance -->
                         <StackPanel Orientation="Vertical" Margin="15">
                             <TextBlock Text="Q" 
                                        Foreground="{StaticResource TextSecondary}" 
@@ -720,7 +710,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <!-- Piano Keyboard Section -->
+        <!-- Piano -->
         <Border Grid.Row="2" 
                 Background="{StaticResource CardBackground}" 
                 BorderBrush="{StaticResource BorderColor}" 

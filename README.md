@@ -30,8 +30,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Ceenth Demo][product-screenshot]](https://github.com/tlongle/ceenth)
-
 Ceenth is a lightweight synthesizer that generates sound in real time.  
 It features a polyphonic engine, oscilloscope waveform preview, a basic low-pass filter with resonance, AxxR envelope (Attack & Release currently), effects like tremolo and vibrato, and preset storage via SQLite.
 

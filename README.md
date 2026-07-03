@@ -7,7 +7,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/tlongle/ceenth">
-    <img src="https://i.imgur.com/6CL8BDM.png" alt="Ceenth Logo" width="250" height="250">
+    <img src="https://i.imgur.com/6CL8BDM.png" alt="Ceenth Logo">
   </a>
     <br />
     <br />
